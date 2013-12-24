@@ -1,0 +1,278 @@
+HTML {	overflow-y: scroll;}
+
+BODY {	text-align: left;
+	font-family: verdana, arial, sans-serif;
+	font-size: 10pt;
+	color: #555555;}
+
+*    {	margin: 0; padding: 0;}
+
+A	  {outline: none;}
+A:link    {color: blue;}
+A:visited {color: purple;}
+A:hover   {color: green;}
+A:active  {color: red;}
+
+IMG 	{border: 0;}
+IMG.centre {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;}
+IMG.box {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border: 1px solid black !important;
+	border-radius: 5px;
+	box-shadow: 1px 2px 8px #333333;}
+
+.preload {clear:both; height: 0; overflow: hidden;}
+
+.lft	{text-align: left;}
+.ctr	{text-align: center;}
+.rht	{text-align: right;}
+.mid	{vertical-align: middle;}
+.top	{vertical-align: top;}
+.ul	{text-decoration:underline;}
+.ital	{font-style:italic;}
+.indent	{margin-left:40px;}
+
+.flt_l	{float: left;}
+.flt_r	{float: right;}
+.flt_c	{margin-left: auto;
+	margin-right: auto;}
+.clr	{clear: both;}
+
+h1 {	font-weight: bold;
+	font-size: 15pt;
+	margin-bottom: 10px;}
+
+h2 {	font-weight: bold;
+	font-size: 13pt;
+	margin-bottom: 7px;}
+
+h3 {	font-weight: bold;
+	font-size: 10pt;}
+
+p {	margin-top: 0px;
+	margin-bottom: 10px;}
+
+.spc1	{padding: 0px 0px 12px 0px;}
+.spc2	{padding: 0px 0px 22px 0px;}
+.spc3	{padding: 0px 0px 28px 0px;}
+
+.iconimg {width: 32px;
+	  height: 32px;
+	  padding: 0px 5px 0px 10px;
+	  vertical-align: middle;}
+
+pre {	background-color: #FFFFFF;
+	padding: 12px 8px 12px 8px;}
+
+
+/*--- DIVS ---*/
+
+#fullpage {
+	overflow: hidden;
+	margin: 3px 30px 20px 30px;
+	border-radius: 10px 10px 10px 10px;
+	box-shadow: 4px 4px 12px #333333;}
+
+#gugle {display:none;}
+
+#head {	position: relative;
+	top: 0px; left: 0px;
+	height: 64px;
+	border-radius: 10px 10px 0px 0px;
+	border-bottom: 1px solid black;}
+
+#logo {	position: relative;
+	top: 15px; left: 20px;
+	width: 128px;
+	height: 44px;}
+
+#content {
+	min-height: 323px;
+	margin: 13px 30px 30px 40px;}
+
+#foot {	position: relative;
+	bottom: 0px; left: 0px;
+	height: 20px;
+	border-radius: 0px 0px 10px 10px;
+	border-top: 1px solid black;}
+
+#bigbox {
+	padding: 10px;
+	background-color: #ffffff;
+	border-radius: 10px 10px 10px 10px;
+	box-shadow: 1px 2px 8px #333333;}
+
+/*--- MENU ---*/
+
+#nav {	position: absolute;
+	top: 30px; left: 190px;
+	list-style:none;
+	line-height: 1;
+	z-index:10;
+	font-family: Verdana,Geneva,sans-serif;
+	font-size: 10px;}
+
+#nav li {
+	position:relative;
+	float:left;
+	margin-right: 10px;}
+
+#nav a {display: block;
+	padding: 0.75em 1em;
+	color: rgb(60,85,128);
+	background: #cccccc;
+	border-radius: 10px 10px 10px 10px;
+	text-decoration:none;}
+
+#nav a:hover {
+	background: #aaaaaa;}
+
+#nav span {
+	display:block;
+	padding: 0.75em 1em;
+	color: darkRed;
+	background: #aaaaaa;
+	border-radius: 10px 10px 10px 10px;
+	cursor: default;}
+
+/*--- MENU: dropdown ---*/
+
+#nav ul {
+	background: white;	/* Background for dropdown in IE7 */
+	background: rgba(255,255,255,0); /* Background transparent for all others */
+	list-style: none;
+	position: absolute;
+	left: -9999px;}
+
+#nav ul li {
+	padding-top: 1px;	/* Space between dropdown items */
+	margin-right: 0px;	/* Clear margin for IE7 */
+	float: none;}
+
+#nav ul a {
+	border-radius: 10px 10px 10px 10px;
+	white-space: nowrap;}	/* Stop text wrapping and creating multi-line dropdown items */
+
+#nav li:hover ul {		/* Display the dropdown on hover by bringing back on screen */
+	left: 0;}
+
+#nav li:hover a {		/* This creates persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
+	color: rgb(60,85,128);
+	background: #aaaaaa;
+	text-decoration: none;}
+
+#nav li:hover ul a {		/* The persistent hover state does however create a global style for links even before they're hovered. Here we undo these effects. */
+	background: #cccccc;
+	text-decoration: none;}
+
+#nav li:hover ul li a:hover {	/* Here we define the most explicit hover states--what happens when you hover each individual link. */
+	background: #aaaaaa;}
+
+/*--- FORMS ---*/
+
+.formline {
+	padding: 5px 0px 10px 0px;}
+
+.formhide {
+	position: absolute;
+	left: -9999px;}
+
+form label {
+	float:left;
+	padding: 4px 0px 0px 0px;
+	width: 90px;}
+
+form label span {
+	padding: 0px 0px 0px 2px;
+	color: #CC0000;}
+
+form input,textarea,select {
+	padding: 4px  !important; 
+	border: 1px solid #c0c0c0 !important;
+	border-radius: 5px;
+	font-family: arial, sans-serif  !important;
+	font-size: 10pt  !important;}
+
+form input.error,textarea.error {
+	border-color: #d08080 !important;}
+
+form input:focus,textarea:focus,select:focus { 
+	box-shadow: 0 0 5px #9ecccc;}
+
+form input.error:focus,textarea.error:focus { 
+	box-shadow: 0 0 5px #c08844;}
+
+.formbtn {
+	margin-left: 200px;}
+
+#errormsg {
+	width: 200px;
+	padding: 10px;
+	color: #333333;
+	background: transparent url(images/background_error.jpg) repeat;
+	border-radius: 10px 10px 10px 10px;
+	box-shadow: 1px 2px 8px #333333;}
+
+.closeBox {
+	float: right;
+	display: inline-block;
+	margin: -6px -6px 0px 6px;
+	padding: 8px 2px 10px 2px;       
+	cursor:pointer;
+	color: #eebbbb;
+	background: #dd8888;
+	border-radius: 5px;
+	line-height: 0px;
+	font-size: 14px;
+	font-weight: bold;
+	text-decoration: none;}
+
+.closeBox:hover {
+	color: #ffdddd;
+	background: #ff5555;}
+
+/*--- BUTTONS ---*/
+
+.btn {	color:#000040;
+	background:#acc4fd;
+	border-radius: 4px 4px 4px 4px;
+	box-shadow: 1px 1px 2px;
+	font-family: arial, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	padding: 2px 3px 2px 3px;
+	cursor: pointer;}
+.btn:hover, .btn:focus {
+	color:#001800;
+	background:#40B040;}
+.btn:active {
+	position: relative;
+	top: 1px;
+	color:#180000;
+	background:#C04040;}
+
+/*--- TABLES ---*/
+
+TABLE {	border: 1px solid #c0c0c0;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	font-family: arial, sans-serif;
+	font-size: 10pt;}
+
+TABLE TH {
+	border: 1px solid #a0a0a0;
+	background-color: #acc4fd;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: top;}
+
+TABLE TD {
+	border: 1px solid #c0c0c0;
+	background-color: white;
+	padding: 0px 3px 0px 3px;
+	text-align: left;
+	vertical-align: top;}

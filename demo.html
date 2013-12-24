@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="author" content="Graham O'Neill, http://goneill.co.nz">
+<meta name="description" content="B+tree in JavaScript">
+<meta name="keywords" content="B+tree,JavaScript,btree">
+<title>JavaScript B+ Tree</title>
+<link rel="stylesheet" type="text/css" href="demo/main.css">
+<script type="text/javascript" src="src/btree.js"></script>
+<script type="text/javascript" src="demo/main.js"></script>
+<script type="text/javascript" src="demo/btree-show.js"></script>
+
+<style type="text/css">
+
+#actForm {
+	margin: 10px 10px 10px 10px;}
+
+.showBox {
+	margin: 5px 0px 15px 0px;
+	padding: 10px;
+	color: #000000;
+	background-color: #FFFFFF;
+	border: 1px solid black;
+	box-shadow: 6px 6px 6px #666;
+	font-family: Arial;
+	font-size: 10pt;
+	overflow-x: auto;}
+
+CANVAS {display: block;}
+
+.trLvl {padding: 2px;}
+
+TABLE.trNode TD {
+	border: 1px solid #8C6414;
+	background-color: #D2B48C;
+	padding: 2px 2px 2px 2px;}
+
+TABLE.trLeaf TD {
+	border: 1px solid #008000;
+	background-color: #90EE90;
+	padding: 2px 2px 2px 2px;}
+
+TABLE.trLeaf TD.here {
+	border: 1px solid #CC0000;
+	background-color: #FFAAAA;}
+
+</style>
+
+<script type="text/javascript">
+
+var myTree = null;
+var hist = [];
+var pool = [];
+var maxDisplay;
+var isBusy = false;
+
+modAct = function(act) {
+	var txt, dis=false, num='';
+	switch (act) {
+		case 'bld':
+			txt = 'Order';
+			break;
+		case 'add':
+		case 'del':
+		case 'seek':
+		case 'near':
+			txt = 'Key value';
+			break;
+		case 'goto':
+			txt = 'Key number';
+			break;
+		case 'top':
+		case 'bot':
+		case 'pack':
+		case 'hist':
+		case 'run':
+		case 'hide':
+		case 'show':
+			txt = '';
+			dis=true;
+			break;
+		case 'rand':
+			num = pool.length;
+		case 'skip':
+		case 'init':
+		case 'time':
+			txt = 'No of keys';
+			break;
+	}
+	ge$('labl').innerHTML = txt;
+	ge$('num').value = num;
+	ge$('num').disabled = dis;
+	if (dis) ge$('btn').focus();
+	else     endCursor(ge$('num'));
+}
+
+runAct = function(act,num) {
+	if (isBusy) return;
+
+	num = parseInt(num,10);
+	if (isNaN(num)) num = 0;
+
+	if (act == 'hide') {
+		ge$('frDiv').style.display = 'none';
+		ge$('act').focus();
+		return;
+	}
+	if (act == 'show') {
+		ge$('frDiv').style.display = '';
+		ge$('act').focus();
+		return;
+	}
+
+	var txt = '';
+	if (myTree!==null) txt = myTree.show('frCanvas');
+	ge$('frMsg').innerHTML = txt;
+
+	txt = '';
+	if ('bld~init~hide~show'.search(act)==-1 && myTree===null) {
+		txt = 'Error: you have to build the tree first.';
+	} else
+	if (act=='bld' && num<3) {
+		txt = 'Error: the tree must have Order of at least 3.';
+	} else
+	if ('add~seek~init~rand~time'.search(act)!=-1 && num<=0) {
+		txt = 'Error: invalid number given. Must be greater than zero.';
+	}
+	if (txt.length>0) act = 'error';
+
+	var foc = 'act';
+	switch (act) {
+		case 'error':
+			break;
+		case 'bld':
+			myTree = new tree(num);
+			maxDisplay = num * 50;
+			hist = [];
+			hist[0] = 'myTree = new tree('+num+');'; 
+			break;
+		case 'add':
+			myTree.insert(num,num);
+			hist.push('myTree.insert('+num+','+num+');');
+			foc = 'num';
+			ge$('num').value = '';
+			break;
+		case 'del':
+			if (num == 0) {
+				myTree.remove();
+				hist.push('myTree.remove();');
+			} else {
+				myTree.remove(num);
+				hist.push('myTree.remove('+num+');');
+			}
+			foc = 'num';
+			ge$('num').value = '';
+			break;
+		case 'seek':
+			myTree.seek(num);
+			hist.push('myTree.seek('+num+');');
+			foc = 'num';
+			break;
+		case 'near':
+			myTree.seek(num,true);
+			hist.push('myTree.seek('+num+',true);');
+			foc = 'num';
+			break;
+		case 'goto':
+			myTree.goto(num);
+			hist.push('myTree.goto('+num+');');
+			break;
+		case 'top':
+			myTree.goTop();
+			hist.push('myTree.goTop();');
+			break;
+		case 'bot':
+			myTree.goBottom();
+			hist.push('myTree.goBottom();');
+			break;
+		case 'pack':
+			myTree.pack();
+			hist.push('myTree.pack();');
+			break;
+		case 'skip':
+			if (num == 0 || num == 1) {
+				myTree.skip();
+				hist.push('myTree.skip();');
+			} else {
+				myTree.skip(num);
+				hist.push('myTree.skip('+num+');');
+			}
+			foc = 'btn';
+			break;
+		case 'init':
+			pool = [];
+			for (i=0; i<num; i++) {
+				pool[i] = i+1;
+			}
+			pool.shuffle();
+			txt = 'Pool set up with '+commas(num)+' keys.<br>\r\n';
+			break;
+		case 'rand':
+			var i=0;
+			while (i<num && pool.length>0) {
+				myTree.insert(pool.pop(),'');
+				if (!myTree.found) i++;
+			}
+			if (i<num) txt = 'Error: ran out of unique keys in the pool. Only '+commas(i)+' added.';
+			hist.push('// '+i+' random keys added to tree');
+			break;
+		case 'time':
+			var ord = myTree.maxkey + 1;
+			myTree = null;
+			pool = [];
+			for (i=0; i<num; i++) {
+				pool[i] = i+1;
+			}
+			pool.shuffle();
+			if (num <= 2000000) {
+				var start = new Date().getTime();
+				myTree = new tree(ord);
+				for (var i=num; i>0; i--) {
+					myTree.insert(pool.pop(),'');
+				}
+				var end = new Date().getTime();
+				txt = 'Tree rebuilt and '+commas(myTree.length)+' random keys added in '+commas(end-start)+'ms<br><br>\r\n';
+				start = new Date().getTime();
+				for (var i=num; i>0; i--) {
+					myTree.seek(i,false);
+					// if (myTree.keyval != i) {
+					//	alert('Key '+i+' missing!');
+					//	break;
+					// }
+				}
+				end = new Date().getTime();
+				txt += 'Seek for every key completed in '+commas(end-start)+'ms\r\n'; 
+			} else {
+				isBusy = true;
+				var start = new Date().getTime();
+				myTree = new tree(ord);
+				addLots(start, num, num);
+				txt = 'Working... Please wait'; 
+			}
+			hist = [];
+			hist[0] = 'myTree = new tree('+ord+');'; 
+			hist.push('// '+num+' random keys added to tree');
+			break;
+		case 'run':
+			Hardcoded();
+			hist.push('// Hardcoded script run');
+			break;
+		case 'hist':
+			for (var i=0, len=hist.length; i<len; i++) {
+				txt += hist[i] + '<br>\r\n';
+			}
+	}
+
+	if (myTree!==null) {
+		if (txt.length==0) txt = myTree.show('toCanvas');
+		else               myTree.showoff('toCanvas');
+	}
+	ge$('toMsg').innerHTML = txt;
+	if (foc!='num') ge$(foc).focus();
+	else            endCursor(ge$('num'));
+}
+
+Hardcoded = function () {
+myTree.insert(1,'');
+myTree.insert(15,'');
+myTree.insert(4,'');
+myTree.insert(10,'');
+myTree.insert(16,'');
+myTree.insert(11,'');
+myTree.insert(13,'');
+myTree.insert(12,'');
+myTree.insert(20,'');
+myTree.insert(9,'');
+myTree.insert(25,'');
+}
+
+function addLots(strTim, totnum, remain) {
+	var doNow = Math.min(remain, 1000000);
+	for (var i=doNow; i>0; i--) {
+		myTree.insert(pool.pop(),'');
+	}
+	remain = remain - doNow;
+	if (remain > 0) {
+		setTimeout(function(){addLots(strTim,totnum,remain);}, 0);
+	} else {
+		var endTim = new Date().getTime();
+		txt = 'Tree rebuilt and '+commas(myTree.length)+' random keys added in '+commas(endTim-strTim)+'ms<br><br>\r\n'; 
+		strTim = new Date().getTime();
+		for (var i=totnum; i>0; i--) {
+			myTree.seek(i,false);
+		}
+		endTim = new Date().getTime();
+		txt += 'Seek for every key completed in '+commas(endTim-strTim)+'ms\r\n'; 
+		ge$('toMsg').innerHTML = txt;
+		isBusy = false;
+	}
+}
+
+Array.prototype.shuffle = function () {
+	for (var i=this.length-1; i>0; i--) {
+		var j = Math.floor(Math.random() * (i+1));
+		var tmp = this[i];
+		this[i] = this[j];
+		this[j] = tmp;
+	}
+	return this;
+}
+
+</script>
+
+</head>
+
+<body onLoad="document.actForm.num.focus()">
+
+<h1>JavaScript B+ Tree</h1>
+<div>By: Graham O'Neill, April 2013</div>
+<p>A pure JavaScript B+ Tree with Insert and balanced Delete. It's fast (500,000 keys 
+in 310ms), documented and has an HTML5 Canvas display.</p>
+
+<a href="http://goneill.co.nz/btree.php"><h2>Original Home</h2></a>
+<br>
+<div id="fullpage">
+
+<div id="content">
+
+<h2>B+ Tree in JavaScript: demo</h2>
+
+<form name="actForm" id="actForm">
+<div class="formbox">
+<div class="formline">
+<label for="act">Selection</label><select name="act" id="act" width="150" style="width:150px" onchange="modAct(this.value)">
+<option value="bld">Build new tree</option>
+<option value="add">Insert</option>
+<option value="del">Delete</option>
+<option value="seek">Seek</option>
+<option value="near">Seek near</option>
+<option value="skip">Skip</option>
+<option value="goto">Go to</option>
+<option value="top">Go top</option>
+<option value="bot">Go bottom</option>
+<option value="pack">Pack</option>
+<option value=" " disabled>―――――――――</option>
+<option value="hide">Hide From box</option>
+<option value="show">Show From box</option>
+<option value="hist">Show history</option>
+<option value=" " disabled>―――――――――</option>
+<option value="run">Run script</option>
+<option value=" " disabled>―――――――――</option>
+<option value="init">Init random pool</option>
+<option value="rand">Add random keys</option>
+<option value="time">Random key timer</option>
+</select>
+</div>
+<div class="formline"><label id="labl" for="num">Order</label><input name="num" id="num" size="5" maxlength="8" type="text" onkeypress="return enterToTab(this,event)"></div>
+<div class="formline"><label>&nbsp;</label><input id="btn" class="btn" value="Go" onclick="runAct(document.actForm.act.value, document.actForm.num.value)" type="button"></div>
+</div>
+</form>
+
+<div id="frDiv">
+<h2>From</h2>
+<div class="showBox">
+<div id="frMsg"></div>
+<canvas id="frCanvas" width="1" height="1"></canvas>
+</div>
+</div>
+
+<h2>Result</h2>
+<div class="showBox">
+<div id="toMsg"></div>
+<canvas id="toCanvas" width="1" height="1"></canvas>
+</div>
+
+</div>
+
+<div id="foot"></div>
+</div>
+
+</body>
+​​​​​</html>
