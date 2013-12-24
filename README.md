@@ -2,6 +2,7 @@ btree-js
 ========
 # B+ Tree in JavaScript
 By: Graham O'Neill, April 2013
+http://goneill.co.nz/btree.php
 
 ## Introduction
 I'd been planning on writing a B+ Tree implementation ever since I came across them on a
@@ -157,9 +158,3 @@ Note that running this multiple times will show progressively slower times. I th
 because the browser has to spend time running a garbage collection process to clean up the
 previous tree, so the best way of timing is to close the browser and run the html file from
 Explorer each time.
-
-Feel free to use this as you wish but please don't claim it to be your own work, and if you
-use it in a real application please let me know so I can see it in use. If you find any bugs
-you can report them by using the Comments section or the Contact page:
-
-http://goneill.co.nz/btree.php
